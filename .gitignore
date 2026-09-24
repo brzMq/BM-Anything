@@ -28,6 +28,7 @@ node_modules/
 web/dist/
 web/.vite/
 *.local
+*.tsbuildinfo
 
 # IDE
 .idea/
