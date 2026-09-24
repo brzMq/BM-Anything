@@ -6,7 +6,7 @@ BM-Anything 把"能力 (Capability)"作为一级对象，让同一个 Capability
 
 ## 当前状态
 
-P0 — Foundation（进行中）。详见 [`CURRENT_STATE.md`](./CURRENT_STATE.md)。
+P0 — Foundation（基础子集已落盘）。文档修正、P0 基础代码、测试、ADR 与 CI workflow 均已就位；质量门禁（ruff / mypy / pytest / vue-tsc+build）在 CI 与本地全绿。下一阶段：P1 — OSS Kernel PoC。详见 [`CURRENT_STATE.md`](./CURRENT_STATE.md)。
 
 ## 快速开始
 
@@ -49,6 +49,8 @@ pytest                       # 单元 + 架构导入测试
 ruff check src tests         # lint
 mypy                         # 类型检查
 ```
+
+以上门禁由 [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) 在每次 push / PR 到 `main` 时运行（后端 Python 3.11/3.12 矩阵 + 前端 `npm run build`）。
 
 ## 本地数据位置
 

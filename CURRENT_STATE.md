@@ -91,7 +91,7 @@ BM-Anything/
 | 数据库迁移可从空库执行 | ✅ | `tests/unit/test_database.py::TestAlembicMigration::test_upgrade_head_from_empty_db` |
 | 本地 Artifact 可写入、读取并校验 checksum | ✅ | `tests/unit/test_local_artifact.py` 21 项 |
 | API/Application/Domain/Infrastructure 依赖方向清晰 | ✅ | `tests/architecture/` 两项导入守卫；domain/capability.contract 空壳带文档约束 |
-| 基本格式/类型/测试检查在 CI 运行 | ⚠️ 本地全绿，CI workflow 待补 | ruff/mypy/pytest/vue-tsc 本地通过；`.github/workflows/ci.yml` 尚未落盘 |
+| 基本格式/类型/测试检查在 CI 运行 | ✅ | `.github/workflows/ci.yml` 已落盘：后端 ruff/mypy/pytest（py3.11+3.12 矩阵）+ 前端 `npm run build`；命令与本地全绿一致 |
 | 未引入旧 PLKB StageRun/Runner/Tauri/旧数据库协议 | ✅ | grep 无 StageRun/Operation Kernel/Tauri；ADR-001 明确 donor-only |
 
 ---
@@ -115,12 +115,16 @@ BM-Anything/
 
 ## 4. 尚未解决 / 下一步
 
+### 本轮追加（收尾 P0 遗留项）
+
+- CI workflow（`.github/workflows/ci.yml`）：已落盘（后端 ruff/mypy/pytest，py3.11+3.12 矩阵；前端 `npm run build`）。命令均已在本地验证通过；首次在 GitHub Actions 上跑通的确认留待 push 后观察。
+- README「当前状态」同步为"P0 基础子集已落盘"，与本文一致。
+
 ### 本轮未做（有意留到对应阶段）
 
 - P1 LFX / Dify Plugin Daemon PoC：未启动。本轮只落了禁止性 architecture guard，未集成 LFX（符合 v0.3.1 §16 Step 4 "如果当前尚未集成 LFX，则只增加禁止性 architecture guard，不要为了修正而提前集成 LFX"）。
 - P2 CapabilitySpec / Provider / Registry 具体模型：未实现，仅空壳。
 - P3 Execution Backend PoC：未启动，Hatchet/Temporal/DBOS 保持 Open。
-- CI workflow（`.github/workflows/ci.yml`）：未落盘。本地 ruff/mypy/pytest/vue-tsc 全绿，但尚未在 CI 环境复现。
 - Scale Profile 数据库/向量库：未触碰。
 
 ### 已知风险
