@@ -86,13 +86,15 @@ BM-Anything/
 
 | 验收条件 | 状态 | 证据 |
 |---|---|---|
-| 干净环境按文档启动 | ✅ | README 快速开始；bma conda env（py3.12）`pip install -e .` + `uvicorn bm.api.app:app` |
+| 干净环境按文档启动 | ⚠️ 未复现 | 在 bma conda env（py3.12）跑通，但该 env 残留 celery/boto3 等包（见 §4 已知风险），真正最小干净环境的复现尚未做 |
 | 无需外部服务即可完成健康检查 | ✅ | `tests/unit/test_health.py::TestLiveness::test_health_needs_no_db`；/health 不触 DB |
 | 数据库迁移可从空库执行 | ✅ | `tests/unit/test_database.py::TestAlembicMigration::test_upgrade_head_from_empty_db` |
 | 本地 Artifact 可写入、读取并校验 checksum | ✅ | `tests/unit/test_local_artifact.py` 21 项 |
 | API/Application/Domain/Infrastructure 依赖方向清晰 | ✅ | `tests/architecture/` 两项导入守卫；domain/capability.contract 空壳带文档约束 |
-| 基本格式/类型/测试检查在 CI 运行 | ✅ | `.github/workflows/ci.yml` 已落盘：后端 ruff/mypy/pytest（py3.11+3.12 矩阵）+ 前端 `npm run build`；命令与本地全绿一致 |
+| 基本格式/类型/测试检查在 CI 运行 | ⚠️ 部分 | **workflow 已落盘**：`.github/workflows/ci.yml`（后端 ruff/mypy/pytest，py3.11+3.12 矩阵 + 前端 `npm run build`），对应命令本地全绿。**但"检查已在 CI 运行"尚无证据**：仓库未配置远端，GitHub Actions 从未执行。 |
 | 未引入旧 PLKB StageRun/Runner/Tauri/旧数据库协议 | ✅ | grep 无 StageRun/Operation Kernel/Tauri；ADR-001 明确 donor-only |
+
+**P0 验收结论：暂不宣布 P0 完成。** 7 项中 5 项有本地证据可判通过；"干净环境复现"与"检查已在 CI 运行"两项目前只有定义/本地证据，缺外部运行证据（无远端、Actions 未执行、最小 env 未重建）。需配置远端并观察一次绿色 CI 运行、以及在干净环境复现快速开始后，再判 P0 通过。
 
 ---
 
@@ -117,7 +119,7 @@ BM-Anything/
 
 ### 本轮追加（收尾 P0 遗留项）
 
-- CI workflow（`.github/workflows/ci.yml`）：已落盘（后端 ruff/mypy/pytest，py3.11+3.12 矩阵；前端 `npm run build`）。命令均已在本地验证通过；首次在 GitHub Actions 上跑通的确认留待 push 后观察。
+- CI workflow（`.github/workflows/ci.yml`）：已落盘（后端 ruff/mypy/pytest，py3.11+3.12 矩阵；前端 `npm run build`）。命令均已在本地验证通过。**注**：仓库当前无 git 远端，GitHub Actions 从未实际执行，"检查已在 CI 运行"这一验收项需待配置远端并观察一次绿色运行后才能判定，详见 §2 结论。
 - README「当前状态」同步为"P0 基础子集已落盘"，与本文一致。
 
 ### 本轮未做（有意留到对应阶段）
