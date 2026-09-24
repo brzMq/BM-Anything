@@ -91,10 +91,10 @@ BM-Anything/
 | 数据库迁移可从空库执行 | ✅ | `tests/unit/test_database.py::TestAlembicMigration::test_upgrade_head_from_empty_db` |
 | 本地 Artifact 可写入、读取并校验 checksum | ✅ | `tests/unit/test_local_artifact.py` 21 项 |
 | API/Application/Domain/Infrastructure 依赖方向清晰 | ✅ | `tests/architecture/` 两项导入守卫；domain/capability.contract 空壳带文档约束 |
-| 基本格式/类型/测试检查在 CI 运行 | ⚠️ 部分 | **workflow 已落盘**：`.github/workflows/ci.yml`（后端 ruff/mypy/pytest，py3.11+3.12 矩阵 + 前端 `npm run build`），对应命令本地全绿。**但"检查已在 CI 运行"尚无证据**：仓库未配置远端，GitHub Actions 从未执行。 |
+| 基本格式/类型/测试检查在 CI 运行 | ✅ | `.github/workflows/ci.yml` 已在 GitHub Actions 实际运行并通过：run #1（commit `18e176e`，push→main）Backend(3.11)+Backend(3.12)+Frontend 全绿，58s。远端 `git@github.com:brzMq/BM-Anything.git` |
 | 未引入旧 PLKB StageRun/Runner/Tauri/旧数据库协议 | ✅ | grep 无 StageRun/Operation Kernel/Tauri；ADR-001 明确 donor-only |
 
-**P0 验收结论：暂不宣布 P0 完成。** 7 项中 5 项有本地证据可判通过；"干净环境复现"与"检查已在 CI 运行"两项目前只有定义/本地证据，缺外部运行证据（无远端、Actions 未执行、最小 env 未重建）。需配置远端并观察一次绿色 CI 运行、以及在干净环境复现快速开始后，再判 P0 通过。
+**P0 验收结论：仅剩 1 项待证。** 7 项中 6 项已通过（含"检查已在 CI 运行"，已由 Actions run #1 绿色运行证实）。唯一未闭合项：**"干净环境按文档启动"** —— 现有 bma env 残留无关包，需在最小干净环境复现 README 快速开始后再判 P0 完全通过。CI 运行证据已具备，不阻塞进入 P1 评估。
 
 ---
 
@@ -119,7 +119,7 @@ BM-Anything/
 
 ### 本轮追加（收尾 P0 遗留项）
 
-- CI workflow（`.github/workflows/ci.yml`）：已落盘（后端 ruff/mypy/pytest，py3.11+3.12 矩阵；前端 `npm run build`）。命令均已在本地验证通过。**注**：仓库当前无 git 远端，GitHub Actions 从未实际执行，"检查已在 CI 运行"这一验收项需待配置远端并观察一次绿色运行后才能判定，详见 §2 结论。
+- CI workflow（`.github/workflows/ci.yml`）：已落盘并在 GitHub Actions 首次实跑通过（run #1，commit `18e176e`，Backend 3.11+3.12 矩阵 + Frontend，全绿 58s）。远端已配置为 `git@github.com:brzMq/BM-Anything.git`。
 - README「当前状态」同步为"P0 基础子集已落盘"，与本文一致。
 
 ### 本轮未做（有意留到对应阶段）
