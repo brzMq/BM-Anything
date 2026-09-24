@@ -9,7 +9,7 @@
 
 **范围**：Vue 3 + TypeScript + Vite；Python + FastAPI + Pydantic；SQLAlchemy + Alembic；SQLite Local Profile；Repository 边界；LocalArtifactStore；基础测试与 CI。
 
-**验收**：干净环境按文档启动；无需外部服务即可完成健康检查；数据库迁移可从空库执行；本地 Artifact 可写入、读取并校验 checksum；API、Application、Domain、Infrastructure 依赖方向清晰；基本格式/类型/测试检查在 CI 运行；未引入旧 PLKB StageRun、Runner、Tauri 或旧数据库协议。
+**验收**：干净环境按文档启动；无需外部服务即可完成健康检查；数据库迁移可从空库执行；本地 Artifact 可写入、读取并校验 checksum；API、Application、Domain、Infrastructure 依赖方向清晰；基本格式/类型/测试检查在质量门禁运行（本地 ruff/mypy/pytest + 前端 build；GitHub Actions CI 已按决定移除）；未引入旧 PLKB StageRun、Runner、Tauri 或旧数据库协议。
 
 ## P1 — OSS Foundation Evaluation
 

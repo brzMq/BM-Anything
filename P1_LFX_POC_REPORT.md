@@ -78,7 +78,7 @@ Adapter 用**鸭子类型**读取 LFX input 对象的 `.name/.required/.info` �
 | `import lfx`（顶层，惰性） | ~0.00s |
 | `from lfx import components` | ~0.01s（惰性索引） |
 | **`from lfx.graph import Graph`（功能内核）** | **16.3s cold / 加载 2260 个模块** |
-| Python 版本约束 | `>=3.10,<3.15`（BM 现为 `>=3.11`，兼容） |
+| Python 版本约束 | `>=3.10,<3.15`（BM 现为 `>=3.12`，兼容） |
 | 重型传递依赖 | langchain / langgraph / pandas / numpy / onnxruntime / pillow / mcp / sqlalchemy / fastapi / uvicorn / gunicorn / cryptography … |
 | 可选 provider 剥离 | 是：provider/bundle 为独立 extras（`lfx-*`），核心不强制 |
 

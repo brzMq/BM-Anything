@@ -14,7 +14,7 @@ P1 — OSS Foundation Evaluation（已完成）。P1-A 对 LFX 做了可复现�
 
 ```bash
 # 1. 创建虚拟环境（推荐 uv，也可用 pip）
-python3.11 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 
 # 2. 安装依赖（含 dev）
@@ -50,7 +50,7 @@ ruff check src tests         # lint
 mypy                         # 类型检查
 ```
 
-以上门禁已在本地全绿，并由 [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) 定义为每次 push / PR 到 `main` 时运行（后端 Python 3.11/3.12 矩阵 + 前端 `npm run build`）。远端尚未配置，CI 首次实际运行待确认。
+以上为质量门禁命令，均在本地全绿（后端 ruff / mypy / pytest + 前端 `npm run build`）。项目不再使用 GitHub Actions CI（`.github/workflows/ci.yml` 已按决定移除），验收以本地质量门禁为准。
 
 ## 本地数据位置
 

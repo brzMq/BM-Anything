@@ -2,7 +2,7 @@
 
 > 最后更新：2026-09-24
 > 当前阶段：**P1 — OSS Foundation Evaluation（P1-A LFX PoC + P1-B Plugin Runtime 调研已完成，两份 ADR 已 Accepted）**
-> P0 状态：仅剩"干净环境复现"一项待闭合（其余 6 项含 CI 运行均已通过，见 §2）
+> P0 状态：仅剩"干净环境复现"一项待闭合（其余 6 项含"质量门禁运行"均已通过，验收以本地门禁为准，见 §2/§7）
 > 下一阶段：P2 — Capability Foundation（用真实能力验证 LFX 复用面 vs 需求面净值）
 
 ---
@@ -92,10 +92,10 @@ BM-Anything/
 | 数据库迁移可从空库执行 | ✅ | `tests/unit/test_database.py::TestAlembicMigration::test_upgrade_head_from_empty_db` |
 | 本地 Artifact 可写入、读取并校验 checksum | ✅ | `tests/unit/test_local_artifact.py` 21 项 |
 | API/Application/Domain/Infrastructure 依赖方向清晰 | ✅ | `tests/architecture/` 两项导入守卫；domain/capability.contract 空壳带文档约束 |
-| 基本格式/类型/测试检查在 CI 运行 | ✅ | `.github/workflows/ci.yml` 已在 GitHub Actions 实际运行并通过：run #1（commit `18e176e`，push→main）Backend(3.11)+Backend(3.12)+Frontend 全绿，58s。远端 `git@github.com:brzMq/BM-Anything.git` |
+| 基本格式/类型/测试检查在质量门禁运行 | ✅ | 本地门禁全绿：ruff check / ruff format --check / mypy / pytest（119 passed, 1 skipped）+ 前端 `npm run build`（模拟 CI 于 2026-09-24 本地复跑通过）。GitHub Actions CI 已按决定移除，验收以本地门禁为准 |
 | 未引入旧 PLKB StageRun/Runner/Tauri/旧数据库协议 | ✅ | grep 无 StageRun/Operation Kernel/Tauri；ADR-001 明确 donor-only |
 
-**P0 验收结论：仅剩 1 项待证。** 7 项中 6 项已通过（含"检查已在 CI 运行"，已由 Actions run #1 绿色运行证实）。唯一未闭合项：**"干净环境按文档启动"** —— 现有 bma env 残留无关包，需在最小干净环境复现 README 快速开始后再判 P0 完全通过。CI 运行证据已具备，不阻塞进入 P1 评估。
+**P0 验收结论：仅剩 1 项待证。** 7 项中 6 项已通过（"检查在质量门禁运行"以本地全绿为准）。唯一未闭合项：**"干净环境按文档启动"** —— 现有 bma env 残留无关包，需在最小干净环境复现 README 快速开始后再判 P0 完全通过。此项不阻塞进入 P1/P2。
 
 ---
 
@@ -120,7 +120,7 @@ BM-Anything/
 
 ### 本轮追加（收尾 P0 遗留项）
 
-- CI workflow（`.github/workflows/ci.yml`）：已落盘并在 GitHub Actions 首次实跑通过（run #1，commit `18e176e`，Backend 3.11+3.12 矩阵 + Frontend，全绿 58s）。远端已配置为 `git@github.com:brzMq/BM-Anything.git`。
+- CI：曾落盘 `.github/workflows/ci.yml` 并在 GitHub Actions 实跑通过（run #1，Backend 3.11+3.12 + Frontend 全绿）。**后按决定移除该 workflow**（见 §7），质量门禁改以本地运行为验收依据；本地模拟 CI 于 2026-09-24 复跑全绿。
 - README「当前状态」同步为"P0 基础子集已落盘"，与本文一致。
 
 ### 本轮未做（有意留到对应阶段）
@@ -168,7 +168,7 @@ P1 两条 Track 均完成并各出 ADR，详见新增 §6。要点：
 
 ```bash
 # 后端
-conda activate bma          # 或 python3.11 -m venv .venv && source .venv/bin/activate
+conda activate bma          # 或 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 alembic upgrade head
 uvicorn bm.api.app:app --reload
@@ -220,4 +220,16 @@ cd web && npm install && npm run build && npm run dev
 - 后端：`ruff check` / `ruff format --check` / `mypy` / `pytest`（119 passed, 1 skipped）全绿。
 - 新增架构守卫：`tests/architecture/test_lfx_only_in_adapter.py`。
 - 前端未改动。
-- 待办：本轮 P1 代码/文档提交后，观察一次 GitHub Actions 绿色运行（新增测试须在有/无 lfx 两种环境语义下均通过——CI 无 lfx，真实-lfx 用例 skip）。
+- 说明：新增测试须在有/无 lfx 两种语义下均通过——本地模拟 CI（无 lfx）下真实-lfx 用例自动 skip，全绿；有 lfx 环境另测 49 passed（见 §6.1）。
+
+---
+
+## 7. CI 策略变更（2026-09-24）
+
+按决定移除 GitHub Actions CI：删除 `.github/workflows/ci.yml`，不再以远端 Actions 运行作为验收依据。
+
+- **原因**：Local-first 项目不依赖托管 CI 作为质量门禁的验收来源；远端 Actions 只是本地门禁的重复执行。
+- **替代**：质量门禁以本地运行为准 —— 后端 `ruff check` / `ruff format --check` / `mypy` / `pytest`，前端 `npm run build`（vue-tsc + vite）。命令清单见 §5 与 README「测试」。
+- **历史**：workflow 曾于 run #1 在 Actions 全绿（Backend 3.11+3.12 + Frontend），该外部证据保留在 git 历史，但当前验收状态不再引用它。
+- **影响**：`ROADMAP_v0.3.md` P0 验收项措辞由"在 CI 运行"改为"在质量门禁运行"。
+- **本地模拟 CI 复跑（2026-09-24）**：backend 3.12 全绿（119 passed, 1 skipped）+ frontend build 通过；3.11 矩阵腿本机无环境未复现。
