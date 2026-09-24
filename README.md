@@ -6,7 +6,7 @@ BM-Anything 把"能力 (Capability)"作为一级对象，让同一个 Capability
 
 ## 当前状态
 
-P0 — Foundation（基础子集已落盘）。文档修正、P0 基础代码、测试、ADR 与 CI workflow 均已就位；质量门禁（ruff / mypy / pytest / vue-tsc+build）在本地与 GitHub Actions 均全绿（Actions run #1：Backend 3.11/3.12 + Frontend 通过）。P0 验收仅剩"干净环境复现"一项待闭合，详见 [`CURRENT_STATE.md`](./CURRENT_STATE.md) §2。下一阶段：P1 — OSS Kernel PoC（LFX / Dify Plugin Daemon 评估）。
+P1 — OSS Foundation Evaluation（已完成）。P1-A 对 LFX 做了可复现解耦 PoC，结论 **ACCEPT WITH LIMITED SCOPE**（`docs/adr/ADR-LFX-KERNEL.md`）；P1-B 将 Dify Plugin Daemon 定位为**协议/架构 donor，不作运行时依赖**（`docs/adr/ADR-PLUGIN-RUNTIME-DIRECTION.md`）。P0 仅剩"干净环境复现"一项待闭合。下一阶段：P2 — Capability Foundation。详见 [`CURRENT_STATE.md`](./CURRENT_STATE.md) §6。
 
 ## 快速开始
 
@@ -102,6 +102,8 @@ Durable / Cache / Temp 生命周期严格分离，详见 `ARCHITECTURE_v0.3.md �
 | `CODEX_PROMPTS_v0.3.md` | 各阶段提示词 |
 | `ADR_INDEX_v0.3.md` | ADR 登记建议 |
 | `docs/adr/` | 已落盘 ADR |
+| `P1_LFX_POC_REPORT.md` | P1-A LFX 集成 PoC 报告（解耦 + 依赖代价 + 许可证溯源） |
+| `P1_PLUGIN_RUNTIME_STUDY.md` | P1-B Dify Plugin Daemon 运行时设计调研 |
 | `CURRENT_STATE.md` | 当前进度与证据 |
 
 ## License

@@ -57,3 +57,11 @@ python_version = "3.11"
 strict = true
 mypy_path = "src"
 packages = ["bm"]
+
+# lfx / langflow are OPTIONAL, adapter-only integrations that are not installed
+# in the base or CI environment. Their imports are confined to
+# bm.infrastructure.adapters.lfx and are duck-typed, so silence missing-stub
+# errors without weakening the architecture guard.
+[[tool.mypy.overrides]]
+module = ["lfx.*", "langflow.*"]
+ignore_missing_imports = true

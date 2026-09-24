@@ -11,8 +11,8 @@
 | Proposed | BM-Anything Greenfield 边界与旧 PLKB 复用政策 | P0 | 旧项目只作 donor/经验来源；禁止迁移旧架构约束；可复用资产审查流程 |
 | Proposed | 服务端与前端基础栈 | P0 | Vue 3/TS/Vite 与 Python/FastAPI/Pydantic/SQLAlchemy/Alembic 的版本、升级和部署策略 |
 | Proposed | Local Profile 持久化与 Artifact 存储 | P0 | SQLite、本地文件、Repository、ArtifactRef 与备份恢复契约 |
-| Proposed | LFX Capability Kernel 评估结果 | P1 | Component、Registry、Manifest、Bundle、Flow primitives 的采用边界与退出方案 |
-| Proposed | Dify Plugin Daemon 评估结果 | P1 | 本地子进程、IPC、生命周期、隔离、权限映射与插件宿主选择 |
+| Accepted | LFX Capability Kernel 评估结果 | P1 | Component、Registry、Manifest、Bundle、Flow primitives 的采用边界与退出方案 → 见 [`docs/adr/ADR-LFX-KERNEL.md`](./docs/adr/ADR-LFX-KERNEL.md)（ACCEPT WITH LIMITED SCOPE） |
+| Accepted | Dify Plugin Daemon 评估结果 | P1 | 本地子进程、IPC、生命周期、隔离、权限映射与插件宿主选择 → 见 [`docs/adr/ADR-PLUGIN-RUNTIME-DIRECTION.md`](./docs/adr/ADR-PLUGIN-RUNTIME-DIRECTION.md)（协议 donor，不作依赖） |
 | Proposed | Capability Contract 与 Provider 生命周期 | P2 | 契约版本、注册、兼容、错误、资源、权限、副作用与幂等语义 |
 | Proposed | Execution Backend PoC 与最终选择 | P3 | Hatchet/Temporal/DBOS 同场景评分、证据、单一正式 Execution Authority |
 | Proposed | Workflow Public Contract 与 Execution Authority | P4 | BM 工作流模型、映射策略、durable truth 唯一归属与迁移策略 |

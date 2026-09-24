@@ -1,8 +1,9 @@
 # BM-Anything CURRENT_STATE
 
 > 最后更新：2026-09-24
-> 当前阶段：**P0 — Foundation（v0.3.1 架构修正 + P0 基础子集已落盘）**
-> 下一阶段：P1 — OSS Kernel PoC（LFX / Dify Plugin Daemon 评估）
+> 当前阶段：**P1 — OSS Foundation Evaluation（P1-A LFX PoC + P1-B Plugin Runtime 调研已完成，两份 ADR 已 Accepted）**
+> P0 状态：仅剩"干净环境复现"一项待闭合（其余 6 项含 CI 运行均已通过，见 §2）
+> 下一阶段：P2 — Capability Foundation（用真实能力验证 LFX 复用面 vs 需求面净值）
 
 ---
 
@@ -135,16 +136,22 @@ BM-Anything/
 - `web/` 仅最小骨架，未接 Vue Flow / Pinia / TanStack Query（按确认问题 5，P0 只需"能跑起来 + 健康检查联通"）。
 - Alembic 目前只有 `0001_initial`（schema_meta 占位表）。P2+ 领域模型落盘时需新增迁移，不得修改 0001。
 
-### P1 下一步
+### P1 已完成（本轮 · 见 §6）
 
-按 `CODEX_PROMPTS_v0.3.md` P1 提示词执行：
+P1 两条 Track 均完成并各出 ADR，详见新增 §6。要点：
 
-1. 核实 LFX 与 Dify Plugin Daemon 的实际仓库、版本、许可证、依赖、维护信息（不凭二手印象）。
-2. 分别构造最小可复现 PoC，验证嵌入/运行方式、组件/插件生命周期、manifest/schema、协议边界、依赖重量、升级风险、退出成本。
-3. 整理证据与失败项，新增 ADR（LFX 评估结果、Dify Plugin Daemon 评估结果）。
-4. 确保 BM Capability 与 Plugin semantics 仍由本项目掌握。
-5. 满足 v0.3.1 追加的 6 条 P1 验收（CapabilitySpec 不 import lfx 等）。
-6. 证据不足时保持未决；不要开始 P2。
+- **P1-A LFX**：ACCEPT WITH LIMITED SCOPE。已落盘解耦 PoC（contract/registry/provider 0 lfx import + `LfxCapabilityAdapter` + 架构守卫），实测依赖足迹与许可证缺口。证据：`P1_LFX_POC_REPORT.md`、`docs/adr/ADR-LFX-KERNEL.md`。
+- **P1-B Dify Plugin Daemon**：定位为协议/架构 donor，**不引入依赖/Redis/DB**。证据：`P1_PLUGIN_RUNTIME_STUDY.md`、`docs/adr/ADR-PLUGIN-RUNTIME-DIRECTION.md`。
+- v0.3.1 追加的 6 条 P1 验收已在 ROADMAP 勾选（由 P1-A 测试满足）。
+- **架构红线（连带 P3）**：LFX Adapter / Plugin Runtime Adapter / Execution Adapter 是 BM Domain 下的**平级 Adapter**；P3 的 DBOS/Hatchet/Temporal PoC 必须直接针对 BM Capability Contract，不得针对 LFX Component。
+
+### P2 下一步
+
+按 `CODEX_PROMPTS_v0.3.md` P2 执行，重点：
+
+1. 用 `document.parse / media.asr / llm.summarize` 真实能力，量化"实际用到的 LFX 子表面"，据此最终决定"依赖 LFX"还是"BM native 薄实现"（ADR-LFX-KERNEL 复审触发）。
+2. 落地完整 Capability Contract（resources/permissions/side effects/idempotency/execution/errors/observability）。
+3. 采用 LFX 前先补许可证溯源（wheel 无 LICENSE 元数据）。
 
 ### P3 PoC 下一步
 
@@ -178,3 +185,39 @@ mypy
 # 前端
 cd web && npm install && npm run build && npm run dev
 ```
+
+---
+
+## 6. P1 — OSS Foundation Evaluation（本轮完成）
+
+### 6.1 P1-A · LFX Integration PoC
+
+**结论：ACCEPT WITH LIMITED SCOPE**（`docs/adr/ADR-LFX-KERNEL.md`）。
+
+| 项 | 结果 |
+|---|---|
+| 身份 | `lfx` = Langflow Executor，独立 PyPI 包 + monorepo `src/lfx/`；Langflow→LFX 单向依赖 |
+| 版本 / 维护 | 1.12.3（2026-09-22），周更，org langflow-ai |
+| 许可证 | 仓库 MIT；**⚠️ wheel dist-info 无 LICENSE 文件、METADATA 无 license 字段** → 采用前补溯源 |
+| 解耦 PoC | contract/registry/provider 0 lfx import；`LfxCapabilityAdapter` 鸭子类型映射；唯一 `import lfx` 惰性置于 `adapters/lfx/support.py` |
+| 测试证据 | bma 干净环境 119 passed/1 skipped；lfx 1.12.3 环境 49 passed（含真实 `lfx.inputs` 映射 + 子进程独立性探针） |
+| langflow 硬依赖 | 837 文件中仅 2 个组件顶层 import langflow（`memory_retrieval.py`/`run_flow.py`），列入 Adapter 黑名单 |
+| 依赖代价 | 净增 ~411 MB / 120 包；`from lfx.graph import Graph` 冷导入 **16.3s / 2260 模块**（故不采用其 graph 执行内核）；manifest/loader/registry 层惰性近零成本 |
+| 退出路径 | 删除 `adapters/lfx/` 即完全解耦，native registry 独立存活（已验证） |
+
+### 6.2 P1-B · Dify Plugin Daemon Design Study
+
+**结论：协议 / 架构 donor，非 BM 运行时依赖**（`docs/adr/ADR-PLUGIN-RUNTIME-DIRECTION.md`）。未新增依赖、未引入 Redis/DB。
+
+- **移植（高通用）**：NDJSON session 协议（session_id + stream/end/error/invoke）；实例生命周期（首心跳、stdout-EOF→kill+reap、reconcile 调度、启动退避）。
+- **借鉴**：统一 runtime 接口（stdio/TCP/HTTP 切换）；production=stdio / developer=TCP 分离；uv-venv bootstrap + 子进程 env allowlist（密钥不入 env）。
+- **重点参照**：其 **slim mode**（无 DB/Redis 本地调用）≈ BM 本地插件 runtime 蓝本。
+- **不采用**：Redis cluster、gorm 安装记录、dify-cloud-kit、Dify inner-API 反向调用（BM 用本地锁 + 本地台账 + 本地 FS 重实现）。
+- 源码基线 `@ c798168`；UNVERIFIED 项见研究文档 §9。
+
+### 6.3 P1 质量门禁
+
+- 后端：`ruff check` / `ruff format --check` / `mypy` / `pytest`（119 passed, 1 skipped）全绿。
+- 新增架构守卫：`tests/architecture/test_lfx_only_in_adapter.py`。
+- 前端未改动。
+- 待办：本轮 P1 代码/文档提交后，观察一次 GitHub Actions 绿色运行（新增测试须在有/无 lfx 两种环境语义下均通过——CI 无 lfx，真实-lfx 用例 skip）。

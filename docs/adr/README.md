@@ -10,13 +10,15 @@
 |---|---|---|---|
 | [ADR-001](./ADR-001-greenfield-boundary.md) | BM-Anything Greenfield 边界与旧 PLKB 复用政策 | 2026-09-24 | Accepted |
 | [ADR-002](./ADR-002-local-profile-zero-infra.md) | Local Profile = Zero User-managed Infrastructure | 2026-09-24 | Accepted |
+| [ADR-LFX-KERNEL](./ADR-LFX-KERNEL.md) | LFX 作为 Capability / Flow Kernel 的采用范围（ACCEPT WITH LIMITED SCOPE） | 2026-09-24 | Accepted |
+| [ADR-PLUGIN-RUNTIME-DIRECTION](./ADR-PLUGIN-RUNTIME-DIRECTION.md) | Plugin Runtime 方向 —— Dify Plugin Daemon 定位为协议 donor | 2026-09-24 | Accepted |
+
+> 注：P1 两份 ADR 采用主题命名（决策指定文件名），未走数字编号；后续如统一编号可在迁移时补 ADR-003/004 别名。
 
 ## 待提出（Proposed，见 ADR_INDEX_v0.3.md）
 
 - 服务端与前端基础栈（P0）
 - Local Profile 持久化与 Artifact 存储（P0，部分已由 ADR-002 覆盖）
-- LFX Capability Kernel 评估结果（P1）
-- Dify Plugin Daemon 评估结果（P1）
 - Capability Contract 与 Provider 生命周期（P2）
 - Execution Backend PoC 与最终选择（P3）
 - Workflow Public Contract 与 Execution Authority（P4）

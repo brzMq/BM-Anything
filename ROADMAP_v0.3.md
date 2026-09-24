@@ -11,20 +11,31 @@
 
 **验收**：干净环境按文档启动；无需外部服务即可完成健康检查；数据库迁移可从空库执行；本地 Artifact 可写入、读取并校验 checksum；API、Application、Domain、Infrastructure 依赖方向清晰；基本格式/类型/测试检查在 CI 运行；未引入旧 PLKB StageRun、Runner、Tauri 或旧数据库协议。
 
-## P1 — OSS Kernel PoC
+## P1 — OSS Foundation Evaluation
 
 **范围**：评估 LFX 与 Dify Plugin Daemon；核查项目身份、版本、许可证、依赖、维护状况、嵌入方式及退出成本。对照 Capability/Component/Registry/Flow 与插件生命周期需求建立小型 PoC。
+
+**两条 Track（二者非同等"待引入依赖"）**：
+
+- **P1-A — Capability / Flow Kernel → LFX**（真正的 integration candidate，做正式 PoC）
+- **P1-B — Plugin Runtime → Dify Plugin Daemon**（architecture / protocol donor，只做协议/生命周期调研，不引入 Redis/DB/依赖）
+
+**P1-A Done Definition**：lfx 独立安装；license provenance 核实；CapabilitySpec/WorkflowDefinition 0 lfx import；LfxCapabilityAdapter works；native capability 无 LFX 可跑；architecture test 拦截泄漏；langflow hard imports 定位并隔离；依赖足迹与打包影响已测量；退出路径记录；ADR 结论 ∈ {ACCEPT / ACCEPT WITH LIMITED SCOPE / REJECT}。
+
+**P1-B Done Definition**：daemon 进程生命周期/stdio 协议/debug TCP/serverless 抽象/DB 耦合/Redis 耦合/Dify 专有域耦合 均已记录；提炼可复用概念；不新增 production 依赖、不引入 Redis、不引入 Dify DB；产出 ADR/reference note。
+
+**架构红线（P1 后仍成立）**：`BM Domain Contract → { LFX Adapter | Plugin Runtime Adapter | Execution Adapter }` 为**平级 Adapter**；禁止 `BM Domain → LFX Domain → Execution Engine` 强制链路。P3 的 DBOS/Hatchet/Temporal PoC 必须直接针对 BM Capability Contract，而非 LFX Component。
 
 **验收**：每个候选都有可复现 PoC、依赖清单、许可证证据、边界分析和失败记录；产出 ADR，明确直接复用、适配、借鉴或不采用；没有 ADR 接受的候选不得成为核心依赖；明确 BM Capability/Plugin semantics 的归属。
 
 **v0.3.1 新增验收**（P1 Done 必须全部满足）：
 
-- [ ] CapabilitySpec 不 import lfx
-- [ ] Registry Contract 不依赖 LFX concrete types
-- [ ] LFX 只能通过 Adapter 接入
-- [ ] Python entry_points / BM manifest 的最小 native registry 路径可运行
-- [ ] LFX PoC 能证明"可替换"，而不是"成为 BM Domain"
-- [ ] architecture test 能阻止 OSS SDK 泄漏到 Domain
+- [x] CapabilitySpec 不 import lfx
+- [x] Registry Contract 不依赖 LFX concrete types
+- [x] LFX 只能通过 Adapter 接入
+- [x] Python entry_points / BM manifest 的最小 native registry 路径可运行
+- [x] LFX PoC 能证明"可替换"，而不是"成为 BM Domain"
+- [x] architecture test 能阻止 OSS SDK 泄漏到 Domain
 
 ## P2 — Capability Foundation
 
